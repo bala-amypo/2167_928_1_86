@@ -1,26 +1,29 @@
 package com.example.demo.controller;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import jakarta.validation.Valid;
-
 import com.example.demo.dto.UserRequestDTO;
+import com.example.demo.entity.User;
+import com.example.demo.service.impl.UserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
 
+    @Autowired
+    private UserServiceImpl userService;
+
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
-        // Add user registration logic here (e.g., save user)
-        return new ResponseEntity<>("User registered successfully", HttpStatus.CREATED);
+    public User register(@RequestBody UserRequestDTO dto) {
+        return userService.register(dto);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@Valid @RequestBody UserRequestDTO userRequestDTO) {
-        // Add login logic here (e.g., authenticate and return JWT)
-        return new ResponseEntity<>("User logged in successfully", HttpStatus.OK);
+    public User login(@RequestBody UserRequestDTO dto) {
+        User user = userService.login(dto);
+        if (user == null) {
+            throw new RuntimeException("Invalid credentials");
+        }
+        return user;
     }
 }
