@@ -1,15 +1,26 @@
 package com.example.demo.dto;
 
-import lombok.*;
-
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class CropRequest {
+
     private String name;
-    private Double suitablePHMin;
-    private Double suitablePHMax;
-    private Double requiredWater;
     private String season;
+
+    public CropRequest() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getSeason() {
+        return season;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSeason(String season) {
+        this.season = season;
+    }
 }
