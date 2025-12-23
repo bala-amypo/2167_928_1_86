@@ -1,34 +1,38 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.SuggestionRequestDTO;
 import com.example.demo.entity.Suggestion;
-import com.example.demo.repository.SuggestionRepository;
-import jakarta.validation.Valid;
+import com.example.demo.service.SuggestionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/suggestions")
 public class SuggestionController {
-    private final SuggestionRepository suggestionRepository;
 
-    public SuggestionController(SuggestionRepository suggestionRepository) {
-        this.suggestionRepository = suggestionRepository;
+    private final SuggestionService suggestionService;
+
+    public SuggestionController(SuggestionService suggestionService) {
+        this.suggestionService = suggestionService;
     }
 
-    @PostMapping("/suggestions")
-    public ResponseEntity<Suggestion> createSuggestion(@RequestBody @Valid SuggestionRequestDTO dto) {
-        Suggestion suggestion = new Suggestion();
-        suggestion.setMessage(dto.getMessage());
-        suggestion.setFarmId(dto.getFarmId());
-        Suggestion saved = suggestionRepository.save(suggestion);
-        return ResponseEntity.ok(saved);
+    @PostMapping("/{farmId}")
+    public ResponseEntity<Suggestion> generate(@PathVariable Long farmId) {
+        return ResponseEntity.ok(
+                suggestionService.generateSuggestion(farmId)
+        );
     }
 
-    @GetMapping("/suggestions/{farmId}")
-    public ResponseEntity<List<Suggestion>> getSuggestions(@PathVariable Long farmId) {
-        List<Suggestion> list = suggestionRepository.findByFarmId(farmId);
-        return ResponseEntity.ok(list);
+    @GetMapping("/{id}")
+    public ResponseEntity<Suggestion> get(@PathVariable Long id) {
+        return ResponseEntity.ok(
+                suggestionService.getSuggestion(id)
+        );
+    }
+
+    @GetMapping("/farm/{farmId}")
+    public ResponseEntity<?> list(@PathVariable Long farmId) {
+        return ResponseEntity.ok(
+                suggestionService.getSuggestionsByFarm(farmId)
+        );
     }
 }
