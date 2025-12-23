@@ -10,7 +10,6 @@ import lombok.*;
 public class UserRequestDTO {
     @NotBlank
     private String email;
-
     @NotBlank
     private String password;
 }

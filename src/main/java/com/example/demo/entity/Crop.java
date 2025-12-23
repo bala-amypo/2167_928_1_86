@@ -13,10 +13,8 @@ public class Crop {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-
     private Double suitablePHMin;
     private Double suitablePHMax;
-    private String season; // added to fix CatalogServiceImpl
+    private String season;
 }

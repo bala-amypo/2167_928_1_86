@@ -11,7 +11,6 @@ import lombok.*;
 public class SuggestionRequestDTO {
     @NotBlank
     private String message;
-
     @NotNull
     private Long farmId;
 }
