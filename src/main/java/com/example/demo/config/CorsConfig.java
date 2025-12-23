@@ -12,7 +12,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOriginPatterns("*")  // <-- Use patterns instead of allowedOrigins
+                        .allowedOriginPatterns("*")   // <- pattern instead of "*"
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowCredentials(true)
                         .allowedHeaders("*");
