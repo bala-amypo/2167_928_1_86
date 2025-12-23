@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
+
     private final UserRepository userRepository;
 
     public CustomUserDetailsService(UserRepository userRepository) {
@@ -17,12 +18,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        // Fetch user from the database
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
+        // Return Spring Security UserDetails with roles
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())
                 .password(user.getPassword())
-                .roles(user.getRole() == null ? "USER" : user.getRole())
+                .roles(user.getRole() != null ? user.getRole() : "USER") // default role
                 .build();
     }
 }
