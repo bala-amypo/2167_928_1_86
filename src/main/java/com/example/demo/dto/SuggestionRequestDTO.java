@@ -5,16 +5,22 @@ import jakarta.validation.constraints.NotNull;
 
 public class SuggestionRequestDTO {
 
-    @NotBlank
+    @NotBlank(message = "Suggestion title is required")
     private String title;
 
-    @NotNull
-    private Double value;
+    @NotBlank(message = "Description is required")
+    private String description;
 
-    // Getters and setters
+    @NotNull(message = "User ID is required")
+    private Long userId;
+
+    // Getters and Setters
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
-    public Double getValue() { return value; }
-    public void setValue(Double value) { this.value = value; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 }

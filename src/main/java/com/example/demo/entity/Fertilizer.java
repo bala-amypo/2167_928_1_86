@@ -15,7 +15,6 @@ public class Fertilizer {
     private Double phosphorus;
     private Double potassium;
 
-    // Constructors
     public Fertilizer() {}
 
     public Fertilizer(Long id, String name, Double nitrogen, Double phosphorus, Double potassium) {
@@ -26,7 +25,7 @@ public class Fertilizer {
         this.potassium = potassium;
     }
 
-    // Getters and setters
+    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
