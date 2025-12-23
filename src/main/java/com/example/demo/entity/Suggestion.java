@@ -1,26 +1,40 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "suggestions")
 public class Suggestion {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String recommendedCrop;
+    private String title;
 
-    @ManyToOne
-    private Farm farm;
+    @Column(length = 1000)
+    private String description;
+
+    private Long farmId; // Link to a farm
 
     public Suggestion() {}
 
-    // Getters and setters
+    public Suggestion(Long id, String title, String description, Long farmId) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.farmId = farmId;
+    }
+
+    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public String getRecommendedCrop() { return recommendedCrop; }
-    public void setRecommendedCrop(String recommendedCrop) { this.recommendedCrop = recommendedCrop; }
-    public Farm getFarm() { return farm; }
-    public void setFarm(Farm farm) { this.farm = farm; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+
+    public Long getFarmId() { return farmId; }
+    public void setFarmId(Long farmId) { this.farmId = farmId; }
 }
