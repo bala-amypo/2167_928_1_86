@@ -19,22 +19,16 @@ public class Farm {
         this.owner = owner;
     }
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
-
     public double getSoilPH() { return soilPH; }
     public void setSoilPH(double soilPH) { this.soilPH = soilPH; }
-
     public double getWaterLevel() { return waterLevel; }
     public void setWaterLevel(double waterLevel) { this.waterLevel = waterLevel; }
-
     public String getSeason() { return season; }
     public void setSeason(String season) { this.season = season; }
-
     public User getOwner() { return owner; }
     public void setOwner(User owner) { this.owner = owner; }
 }
