@@ -1,14 +1,9 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
 @Table(name = "crops")
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Crop {
 
     @Id
@@ -16,8 +11,37 @@ public class Crop {
     private Long id;
 
     private String name;
-    private Double suitablePHMin;
-    private Double suitablePHMax;
-    private Double requiredWater;
     private String season;
+
+    public Crop() {
+    }
+
+    public Crop(String name, String season) {
+        this.name = name;
+        this.season = season;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getSeason() {
+        return season;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setSeason(String season) {
+        this.season = season;
+    }
 }
