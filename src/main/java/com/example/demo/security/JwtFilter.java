@@ -40,7 +40,7 @@ public class JwtFilter extends OncePerRequestFilter {
                         new UsernamePasswordAuthenticationToken(
                                 userId,
                                 null,
-                                Collections.emptyList() // You can map role to authorities if needed
+                                Collections.emptyList()
                         );
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
