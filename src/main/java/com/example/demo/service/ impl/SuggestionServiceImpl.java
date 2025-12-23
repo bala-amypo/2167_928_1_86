@@ -1,61 +1,47 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.*;
-import com.example.demo.exception.ResourceNotFoundException;
+import com.example.demo.dto.SuggestionRequestDTO;
+import com.example.demo.dto.SuggestionResponseDTO;
+import com.example.demo.entity.Suggestion;
 import com.example.demo.repository.SuggestionRepository;
-import com.example.demo.service.*;
-import lombok.RequiredArgsConstructor;
+import com.example.demo.service.SuggestionService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class SuggestionServiceImpl implements SuggestionService {
 
-    private final FarmService farmService;
-    private final CatalogService catalogService;
-    private final SuggestionRepository repo;
+    private final SuggestionRepository repository;
 
-    @Override
-    public Suggestion generateSuggestion(Long farmId) {
-
-        Farm farm = farmService.getFarmById(farmId);
-
-        List<Crop> crops = catalogService.findSuitableCrops(
-                farm.getSoilPH(),
-                farm.getWaterLevel(),
-                farm.getSeason()
-        );
-
-        List<String> cropNames = crops.stream()
-                .map(Crop::getName)
-                .toList();
-
-        List<Fertilizer> fertilizers =
-                catalogService.findFertilizersForCrops(cropNames);
-
-        Suggestion suggestion = Suggestion.builder()
-                .farm(farm)
-                .suggestedCrops(String.join(",", cropNames))
-                .suggestedFertilizers(
-                        fertilizers.stream()
-                                .map(Fertilizer::getName)
-                                .collect(Collectors.joining(",")))
-                .build();
-
-        return repo.save(suggestion);
+    public SuggestionServiceImpl(SuggestionRepository repository) {
+        this.repository = repository;
     }
 
     @Override
-    public Suggestion getSuggestion(Long suggestionId) {
-        return repo.findById(suggestionId)
-                .orElseThrow(() -> new ResourceNotFoundException("Suggestion not found"));
+    public SuggestionResponseDTO generateSuggestion(SuggestionRequestDTO requestDTO) {
+        Suggestion suggestion = new Suggestion();
+        suggestion.setTitle(requestDTO.getTitle());
+        suggestion.setDescription(requestDTO.getDescription());
+        suggestion.setFarmId(requestDTO.getFarmId());
+
+        Suggestion saved = repository.save(suggestion);
+        return new SuggestionResponseDTO(saved.getId(), saved.getTitle(), saved.getDescription(), saved.getFarmId());
     }
 
     @Override
-    public List<Suggestion> getSuggestionsByFarm(Long farmId) {
-        return repo.findByFarmId(farmId);
+    public SuggestionResponseDTO getSuggestion(Long id) {
+        Suggestion suggestion = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Suggestion not found"));
+        return new SuggestionResponseDTO(suggestion.getId(), suggestion.getTitle(), suggestion.getDescription(), suggestion.getFarmId());
+    }
+
+    @Override
+    public List<SuggestionResponseDTO> getSuggestionsByFarm(Long farmId) {
+        return repository.findByFarmId(farmId)
+                .stream()
+                .map(s -> new SuggestionResponseDTO(s.getId(), s.getTitle(), s.getDescription(), s.getFarmId()))
+                .collect(Collectors.toList());
     }
 }

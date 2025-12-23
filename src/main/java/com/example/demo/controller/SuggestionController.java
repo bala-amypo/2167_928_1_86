@@ -1,10 +1,12 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Suggestion;
+import com.example.demo.dto.SuggestionRequestDTO;
+import com.example.demo.dto.SuggestionResponseDTO;
 import com.example.demo.service.SuggestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -14,18 +16,18 @@ public class SuggestionController {
 
     private final SuggestionService service;
 
-    @PostMapping("/{farmId}")
-    public Suggestion generate(@PathVariable Long farmId) {
-        return service.generateSuggestion(farmId);
+    @PostMapping
+    public SuggestionResponseDTO generate(@Valid @RequestBody SuggestionRequestDTO requestDTO) {
+        return service.generateSuggestion(requestDTO);
     }
 
     @GetMapping("/{id}")
-    public Suggestion get(@PathVariable Long id) {
+    public SuggestionResponseDTO get(@PathVariable Long id) {
         return service.getSuggestion(id);
     }
 
     @GetMapping("/farm/{farmId}")
-    public List<Suggestion> byFarm(@PathVariable Long farmId) {
+    public List<SuggestionResponseDTO> byFarm(@PathVariable Long farmId) {
         return service.getSuggestionsByFarm(farmId);
     }
 }
