@@ -5,7 +5,10 @@ import lombok.*;
 
 @Entity
 @Table(name = "crops")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Crop {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,5 +18,5 @@ public class Crop {
 
     private Double suitablePHMin;
     private Double suitablePHMax;
-    private String soilType; // optional
+    private String season; // added to fix CatalogServiceImpl
 }

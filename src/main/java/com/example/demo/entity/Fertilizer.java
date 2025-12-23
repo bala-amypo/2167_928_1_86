@@ -5,7 +5,10 @@ import lombok.*;
 
 @Entity
 @Table(name = "fertilizers")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Fertilizer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,5 +18,5 @@ public class Fertilizer {
 
     private String npkRatio;
 
-    private String recommendedForCrops; // CSV of crop names
+    private String recommendedForCrops; // CSV
 }

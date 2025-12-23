@@ -5,7 +5,10 @@ import lombok.*;
 
 @Entity
 @Table(name = "suggestions")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Suggestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
