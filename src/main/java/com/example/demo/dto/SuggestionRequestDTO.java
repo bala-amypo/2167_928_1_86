@@ -1,7 +1,8 @@
 package com.example.demo.dto;
-
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+
 
 public class SuggestionRequestDTO {
     @NotBlank(message = "Title is required")
