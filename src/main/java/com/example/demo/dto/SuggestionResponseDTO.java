@@ -1,27 +1,14 @@
-package com.example.demo.entity;
+package com.example.demo.dto;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+public class SuggestionResponseDTO {
 
-@Entity
-@Table(name = "suggestions")
-public class Suggestion {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @NotBlank
     private String title;
-
-    @NotNull
     private Double value;
 
-    // Constructors
-    public Suggestion() {}
+    public SuggestionResponseDTO() {}
 
-    public Suggestion(Long id, String title, Double value) {
+    public SuggestionResponseDTO(Long id, String title, Double value) {
         this.id = id;
         this.title = title;
         this.value = value;

@@ -1,26 +1,20 @@
 package com.example.demo.dto;
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class SuggestionRequestDTO {
-    @NotBlank(message = "Title is required")
+
+    @NotBlank
     private String title;
 
-    @NotBlank(message = "Description is required")
-    private String description;
+    @NotNull
+    private Double value;
 
-    @NotNull(message = "Farm ID is required")
-    private Long farmId;
-
-    // Getters and Setters
+    // Getters and setters
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public Long getFarmId() { return farmId; }
-    public void setFarmId(Long farmId) { this.farmId = farmId; }
+    public Double getValue() { return value; }
+    public void setValue(Double value) { this.value = value; }
 }

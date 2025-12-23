@@ -2,32 +2,35 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.SuggestionRequestDTO;
 import com.example.demo.dto.SuggestionResponseDTO;
-import com.example.demo.service.SuggestionService;
-import lombok.RequiredArgsConstructor;
+import com.example.demo.entity.Suggestion;
+import com.example.demo.repository.SuggestionRepository;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/suggestions")
-@RequiredArgsConstructor
+@RequestMapping("/api/suggestions")
 public class SuggestionController {
 
-    private final SuggestionService service;
+    @Autowired
+    private SuggestionRepository suggestionRepository;
+
+    @GetMapping
+    public List<SuggestionResponseDTO> getAll() {
+        return suggestionRepository.findAll().stream()
+                .map(s -> new SuggestionResponseDTO(s.getId(), s.getTitle(), s.getValue()))
+                .collect(Collectors.toList());
+    }
 
     @PostMapping
-    public SuggestionResponseDTO generate(@Valid @RequestBody SuggestionRequestDTO requestDTO) {
-        return service.generateSuggestion(requestDTO);
-    }
-
-    @GetMapping("/{id}")
-    public SuggestionResponseDTO get(@PathVariable Long id) {
-        return service.getSuggestion(id);
-    }
-
-    @GetMapping("/farm/{farmId}")
-    public List<SuggestionResponseDTO> byFarm(@PathVariable Long farmId) {
-        return service.getSuggestionsByFarm(farmId);
+    public SuggestionResponseDTO create(@Valid @RequestBody SuggestionRequestDTO dto) {
+        Suggestion s = new Suggestion();
+        s.setTitle(dto.getTitle());
+        s.setValue(dto.getValue());
+        Suggestion saved = suggestionRepository.save(s);
+        return new SuggestionResponseDTO(saved.getId(), saved.getTitle(), saved.getValue());
     }
 }
