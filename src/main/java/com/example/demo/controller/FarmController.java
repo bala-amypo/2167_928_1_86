@@ -1,31 +1,27 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.FarmRequest;
-import com.example.demo.entity.Fertilizer;
-import com.example.demo.repository.FertilizerRepository;
-import org.springframework.security.core.Authentication;
+import com.example.demo.entity.Farm;
+import com.example.demo.service.FarmService;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/farm")
+@RequestMapping("/farms")
 public class FarmController {
 
-    private final FertilizerRepository fertilizerRepository;
+    private final FarmService farmService;
 
-    public FarmController(FertilizerRepository fertilizerRepository) {
-        this.fertilizerRepository = fertilizerRepository;
+    public FarmController(FarmService farmService) {
+        this.farmService = farmService;
     }
 
-    @PostMapping("/suggest")
-    public List<Fertilizer> suggestFertilizer(
-            @RequestBody FarmRequest request,
-            Authentication authentication) {
+    @GetMapping
+    public List<Farm> getFarms() {
+        return farmService.getAllFarms();
+    }
 
-        return fertilizerRepository
-                .findBySuitableCropAndSoilType(
-                        request.getCrop(),
-                        request.getSoilType());
+    @PostMapping
+    public Farm createFarm(@RequestBody Farm farm) {
+        return farmService.saveFarm(farm);
     }
 }

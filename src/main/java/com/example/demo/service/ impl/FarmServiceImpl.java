@@ -1,46 +1,27 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.*;
-import com.example.demo.exception.*;
-import com.example.demo.repository.*;
+import com.example.demo.entity.Farm;
+import com.example.demo.repository.FarmRepository;
 import com.example.demo.service.FarmService;
-import com.example.demo.util.ValidationUtil;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class FarmServiceImpl implements FarmService {
 
-    private final FarmRepository farmRepo;
-    private final UserRepository userRepo;
+    private final FarmRepository farmRepository;
 
-    @Override
-    public Farm createFarm(Farm farm, Long ownerId) {
-
-        if (farm.getSoilPH() < 3 || farm.getSoilPH() > 10)
-            throw new IllegalArgumentException("Invalid pH");
-
-        if (!ValidationUtil.validSeason(farm.getSeason()))
-            throw new BadRequestException("Invalid season");
-
-        User owner = userRepo.findById(ownerId)
-                .orElseThrow(() -> new BadRequestException("Owner not found"));
-
-        farm.setOwner(owner);
-        return farmRepo.save(farm);
+    public FarmServiceImpl(FarmRepository farmRepository) {
+        this.farmRepository = farmRepository;
     }
 
     @Override
-    public List<Farm> getFarmsByOwner(Long ownerId) {
-        return farmRepo.findByOwnerId(ownerId);
+    public List<Farm> getAllFarms() {
+        return farmRepository.findAll();
     }
 
     @Override
-    public Farm getFarmById(Long farmId) {
-        return farmRepo.findById(farmId)
-                .orElseThrow(() -> new ResourceNotFoundException("Farm not found"));
+    public Farm saveFarm(Farm farm) {
+        return farmRepository.save(farm);
     }
 }
