@@ -1,3 +1,5 @@
+package com.example.demo.config;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -12,9 +14,9 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOriginPatterns("*")   // <- pattern instead of "*"
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowCredentials(true)
+                        .allowedOriginPatterns("*") // <- use patterns instead of fixed origins
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowCredentials(true)     // credentials allowed
                         .allowedHeaders("*");
             }
         };
