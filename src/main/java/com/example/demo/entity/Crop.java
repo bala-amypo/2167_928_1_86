@@ -1,47 +1,35 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "crops")
 public class Crop {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-    private String season;
+    private double suitablePHMin;
+    private double suitablePHMax;
+    private double requiredWater;
 
-    public Crop() {
-    }
+    public Crop() {}
 
-    public Crop(String name, String season) {
-        this.name = name;
-        this.season = season;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getSeason() {
-        return season;
-    }
-
-    public void setId(Long id) {
+    public Crop(Long id, String name, double suitablePHMin, double suitablePHMax, double requiredWater) {
         this.id = id;
-    }
-
-    public void setName(String name) {
         this.name = name;
+        this.suitablePHMin = suitablePHMin;
+        this.suitablePHMax = suitablePHMax;
+        this.requiredWater = requiredWater;
     }
 
-    public void setSeason(String season) {
-        this.season = season;
-    }
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public double getSuitablePHMin() { return suitablePHMin; }
+    public void setSuitablePHMin(double suitablePHMin) { this.suitablePHMin = suitablePHMin; }
+
+    public double getSuitablePHMax() { return suitablePHMax; }
+    public void setSuitablePHMax(double suitablePHMax) { this.suitablePHMax = suitablePHMax; }
+
+    public double getRequiredWater() { return requiredWater; }
+    public void setRequiredWater(double requiredWater) { this.requiredWater = requiredWater; }
 }
