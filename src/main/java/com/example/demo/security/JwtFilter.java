@@ -32,8 +32,11 @@ public class JwtFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
 
-            if (jwtTokenProvider.validateToken(token)) {
-                Long userId = jwtTokenProvider.getUserId(token);
+            // validateToken RETURNS Claims, not boolean
+            var claims = jwtTokenProvider.validateToken(token);
+
+            if (claims != null) {
+                Long userId = Long.valueOf(claims.getSubject());
 
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
