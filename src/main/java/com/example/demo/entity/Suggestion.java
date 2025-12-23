@@ -13,5 +13,5 @@ public class Suggestion {
 
     private String message;
 
-    private Long farmId; // if you track suggestions by farm
+    private Long farmId;
 }
