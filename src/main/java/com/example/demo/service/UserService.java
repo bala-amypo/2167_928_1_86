@@ -1,8 +1,12 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.UserRequestDTO;
-import com.example.demo.dto.UserResponseDTO;
+import com.example.demo.entity.User;
 
 public interface UserService {
-    UserResponseDTO register(UserRequestDTO userRequestDTO);
+
+    User register(User user);
+
+    User findByEmail(String email);
+
+    User findById(Long id);
 }
