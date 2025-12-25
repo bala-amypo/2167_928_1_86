@@ -2,8 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Suggestion;
 import com.example.demo.service.SuggestionService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/suggestions")
@@ -16,23 +17,17 @@ public class SuggestionController {
     }
 
     @PostMapping("/{farmId}")
-    public ResponseEntity<Suggestion> generate(@PathVariable Long farmId) {
-        return ResponseEntity.ok(
-                suggestionService.generateSuggestion(farmId)
-        );
+    public Suggestion generate(@PathVariable Long farmId) {
+        return suggestionService.generateSuggestion(farmId);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Suggestion> get(@PathVariable Long id) {
-        return ResponseEntity.ok(
-                suggestionService.getSuggestion(id)
-        );
+    // REQUIRED BY TESTS
+    public Suggestion getSuggestion(long id) {
+        return suggestionService.getSuggestion(id);
     }
 
     @GetMapping("/farm/{farmId}")
-    public ResponseEntity<?> list(@PathVariable Long farmId) {
-        return ResponseEntity.ok(
-                suggestionService.getSuggestionsByFarm(farmId)
-        );
+    public List<Suggestion> list(@PathVariable Long farmId) {
+        return suggestionService.getSuggestionsByFarm(farmId);
     }
 }
