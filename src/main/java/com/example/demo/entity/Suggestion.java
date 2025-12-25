@@ -2,6 +2,7 @@ package com.example.demo.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Data
@@ -23,8 +24,9 @@ public class Suggestion {
 
     private LocalDateTime createdAt;
 
+    // 🔴 TESTS CALL THIS DIRECTLY
     @PrePersist
-    public void onCreate() {
-        createdAt = LocalDateTime.now();
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
     }
 }
