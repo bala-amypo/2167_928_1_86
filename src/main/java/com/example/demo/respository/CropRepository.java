@@ -8,7 +8,6 @@ import java.util.List;
 
 public interface CropRepository extends JpaRepository<Crop, Long> {
 
-    // 🔴 used by services
     @Query("""
         SELECT c FROM Crop c
         WHERE c.suitablePHMin <= :ph
@@ -17,8 +16,8 @@ public interface CropRepository extends JpaRepository<Crop, Long> {
     """)
     List<Crop> findSuitableCrops(Double ph, String season);
 
-    // 🔴 overload for tests
+    // test convenience overload
     default List<Crop> findSuitableCrops(double ph, String season) {
-        return findSuitableCrops(ph, season);
+        return findSuitableCrops(Double.valueOf(ph), season);
     }
 }
