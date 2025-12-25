@@ -1,48 +1,58 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dto.AuthResponseDTO;
-import com.example.demo.dto.UserRequestDTO;
+import com.example.demo.dto.*;
 import com.example.demo.entity.User;
+import com.example.demo.exception.BadRequestException;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.AuthService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-                           JwtTokenProvider jwtTokenProvider) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
-
     @Override
-    public AuthResponseDTO register(UserRequestDTO request) {
-        User user = new User();
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole("USER");
+    public AuthResponse register(RegisterRequest request) {
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new BadRequestException("Email");
+        }
+
+        User user = User.builder()
+                .name(request.getName())
+                .email(request.getEmail())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role("USER")
+                .build();
+
         userRepository.save(user);
 
-        String token = jwtTokenProvider.generateToken(user.getId(), user.getRole());
-        return new AuthResponseDTO(user.getId(), user.getEmail(), token);
+        String token = jwtTokenProvider.createToken(
+                user.getId(), user.getEmail(), user.getRole()
+        );
+
+        return new AuthResponse(token, user.getId(), user.getEmail(), user.getRole());
     }
 
     @Override
-    public AuthResponseDTO login(UserRequestDTO request) {
+    public AuthResponse login(AuthRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid email/password"));
+                .orElseThrow(() -> new BadRequestException("Email"));
+
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid email/password");
+            throw new BadRequestException("Email");
         }
-        String token = jwtTokenProvider.generateToken(user.getId(), user.getRole());
-        return new AuthResponseDTO(user.getId(), user.getEmail(), token);
+
+        String token = jwtTokenProvider.createToken(
+                user.getId(), user.getEmail(), user.getRole()
+        );
+
+        return new AuthResponse(token, user.getId(), user.getEmail(), user.getRole());
     }
 }
