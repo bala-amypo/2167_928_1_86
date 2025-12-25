@@ -6,5 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface FertilizerRepository extends JpaRepository<Fertilizer, Long> {
-    List<Fertilizer> findByRecommendedForCropsContaining(String crop);
+
+    // 🔴 REQUIRED BY TESTS
+    List<Fertilizer> findByCropName(String cropName);
 }
