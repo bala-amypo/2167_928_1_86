@@ -23,9 +23,11 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Crop addCrop(Crop crop) {
+        // Business Rule: PH Min <= PH Max
         if (crop.getSuitablePHMin() > crop.getSuitablePHMax()) {
             throw new BadRequestException("PH min cannot be greater than PH max");
         }
+        // Business Rule: Valid Season
         if (!ValidationUtil.validSeason(crop.getSeason())) {
             throw new BadRequestException("Invalid season");
         }
@@ -34,6 +36,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Fertilizer addFertilizer(Fertilizer fertilizer) {
+        // Business Rule: NPK format validation (e.g., 10-20-10)
         if (fertilizer.getNpkRatio() == null || !fertilizer.getNpkRatio().matches("\\d+-\\d+-\\d+")) {
             throw new BadRequestException("Invalid NPK format");
         }
