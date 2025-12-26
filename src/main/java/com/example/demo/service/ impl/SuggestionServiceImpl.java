@@ -1,54 +1,52 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Crop;
-import com.example.demo.entity.Fertilizer;
-import com.example.demo.exception.BadRequestException;
-import com.example.demo.repository.CropRepository;
-import com.example.demo.repository.FertilizerRepository;
-import com.example.demo.service.CatalogService;
-import com.example.demo.util.ValidationUtil;
+import com.example.demo.entity.*;
+import com.example.demo.repository.SuggestionRepository;
+import com.example.demo.service.*;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CatalogServiceImpl implements CatalogService {
-    private final CropRepository cropRepository;
-    private final FertilizerRepository fertilizerRepository;
+public class SuggestionServiceImpl implements SuggestionService {
+    private final FarmService farmService;
+    private final CatalogService catalogService;
+    private final SuggestionRepository suggestionRepository;
 
-    public CatalogServiceImpl(CropRepository cropRepository, FertilizerRepository fertilizerRepository) {
-        this.cropRepository = cropRepository;
-        this.fertilizerRepository = fertilizerRepository;
+    public SuggestionServiceImpl(FarmService farmService, CatalogService catalogService, SuggestionRepository suggestionRepository) {
+        this.farmService = farmService;
+        this.catalogService = catalogService;
+        this.suggestionRepository = suggestionRepository;
     }
 
     @Override
-    public Crop addCrop(Crop crop) {
-        if (crop.getSuitablePHMin() > crop.getSuitablePHMax()) {
-            throw new BadRequestException("PH min cannot be greater than PH max");
-        }
-        if (!ValidationUtil.validSeason(crop.getSeason())) {
-            throw new BadRequestException("Invalid season");
-        }
-        return cropRepository.save(crop);
+    public Suggestion generateSuggestion(Long farmId) {
+        Farm farm = farmService.getFarmById(farmId);
+        
+        List<Crop> crops = catalogService.findSuitableCrops(farm.getSoilPH(), farm.getWaterLevel(), farm.getSeason());
+        String cropCsv = crops.stream().map(Crop::getName).collect(Collectors.joining(","));
+
+        List<String> cropNames = crops.stream().map(Crop::getName).collect(Collectors.toList());
+        String fertCsv = catalogService.findFertilizersForCrops(cropNames).stream()
+                .map(Fertilizer::getName).collect(Collectors.joining(","));
+
+        Suggestion suggestion = Suggestion.builder()
+                .farm(farm)
+                .suggestedCrops(cropCsv)
+                .suggestedFertilizers(fertCsv)
+                .build();
+        
+        return suggestionRepository.save(suggestion);
     }
 
     @Override
-    public Fertilizer addFertilizer(Fertilizer fertilizer) {
-        if (fertilizer.getNpkRatio() == null || !fertilizer.getNpkRatio().matches("\\d+-\\d+-\\d+")) {
-            throw new BadRequestException("Invalid NPK format");
-        }
-        return fertilizerRepository.save(fertilizer);
+    public Suggestion getSuggestion(Long id) {
+        return suggestionRepository.findById(id).orElseThrow(() -> 
+            new com.example.demo.exception.ResourceNotFoundException("Suggestion not found"));
     }
 
     @Override
-    public List<Crop> findSuitableCrops(Double ph, Double water, String season) {
-        return cropRepository.findSuitableCrops(ph, water, season);
-    }
-
-    @Override
-    public List<Fertilizer> findFertilizersForCrops(List<String> cropNames) {
-        return fertilizerRepository.findAll().stream()
-                .filter(f -> cropNames.stream().anyMatch(name -> f.getRecommendedForCrops().contains(name)))
-                .collect(Collectors.toList());
+    public List<Suggestion> getSuggestionsByFarm(Long farmId) {
+        return suggestionRepository.findByFarmId(farmId);
     }
 }
