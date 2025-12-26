@@ -2,16 +2,18 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.Farm;
 import com.example.demo.entity.User;
+import com.example.demo.exception.BadRequestException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.FarmRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.FarmService;
-import com.example.demo.util.ValidationUtil;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
+@Transactional
 public class FarmServiceImpl implements FarmService {
+
     private final FarmRepository farmRepo;
     private final UserRepository userRepo;
 
@@ -21,18 +23,18 @@ public class FarmServiceImpl implements FarmService {
     }
 
     @Override
-    public Farm createFarm(Farm farm, Long userId) {
-        if (!ValidationUtil.validPH(farm.getSoilPH())) 
-            throw new IllegalArgumentException("Invalid pH level");
-        User owner = userRepo.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        farm.setOwner(owner);
-        return farmRepo.save(farm);
-    }
+    public Farm createFarm(Farm farm, Long ownerId) {
+        if (farm.getSoilPH() < 3.0 || farm.getSoilPH() > 10.0)
+            throw new IllegalArgumentException("Invalid pH");
 
-    @Override
-    public List<Farm> getFarmsByOwner(Long userId) {
-        return farmRepo.findByOwnerId(userId);
+        if (!Set.of("Kharif", "Rabi", "Summer").contains(farm.getSeason()))
+            throw new BadRequestException("Invalid season");
+
+        User user = userRepo.findById(ownerId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        farm.setOwner(user);
+        return farmRepo.save(farm);
     }
 
     @Override

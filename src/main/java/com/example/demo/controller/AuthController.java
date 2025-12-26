@@ -4,43 +4,52 @@ import com.example.demo.dto.*;
 import com.example.demo.entity.User;
 import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserService;
-import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
+import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/api/auth")
-public class AuthController {
-    private final UserService userService;
-    private final JwtTokenProvider tokenProvider;
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+import java.util.Map;
 
-    public AuthController(UserService userService, JwtTokenProvider tokenProvider) {
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+
+    private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+    public AuthController(UserService userService,
+                          JwtTokenProvider jwtTokenProvider) {
         this.userService = userService;
-        this.tokenProvider = tokenProvider;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
-        User user = User.builder()
+    public ResponseEntity<User> register(@Valid @RequestBody RegisterRequest req) {
+
+        User u = User.builder()
                 .name(req.getName())
                 .email(req.getEmail())
-                .password(passwordEncoder.encode(req.getPassword()))
+                .password(req.getPassword())
                 .role("USER")
                 .build();
-        return ResponseEntity.ok(userService.register(user));
+
+        return ResponseEntity.ok(userService.register(u));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest req) {
+    public ResponseEntity<?> login(@Valid @RequestBody AuthRequest req) {
+
         User user = userService.findByEmail(req.getEmail());
-        
-        // Validation for t34 (Wrong Password)
-        if (user == null || !passwordEncoder.matches(req.getPassword(), user.getPassword())) {
-            return ResponseEntity.status(401).build();
+
+        if (!encoder.matches(req.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String token = tokenProvider.createToken(user.getId(), user.getEmail(), user.getRole());
-        return ResponseEntity.ok(new AuthResponse(token));
+        String token = jwtTokenProvider.createToken(
+                user.getId(), user.getEmail(), user.getRole());
+
+        return ResponseEntity.ok(Map.of("token", token));
     }
 }

@@ -1,13 +1,14 @@
 package com.example.demo.dto;
+
+import jakarta.validation.constraints.*;
 import lombok.*;
 
-@Data @NoArgsConstructor @AllArgsConstructor
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class RegisterRequest {
-    private String name;
-    private String email;
-    private String password;
-
-    public String getName() { return name; }
-    public String getEmail() { return email; }
-    public String getPassword() { return password; }
+    @NotBlank private String name;
+    @Email @NotBlank private String email;
+    @NotBlank private String password;
 }
