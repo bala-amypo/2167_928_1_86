@@ -1,9 +1,13 @@
 package com.example.demo.dto;
 import lombok.*;
 
-@Data @Builder @NoArgsConstructor @AllArgsConstructor
+@Data @NoArgsConstructor @AllArgsConstructor
 public class RegisterRequest {
     private String name;
     private String email;
     private String password;
+
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    public String getPassword() { return password; }
 }

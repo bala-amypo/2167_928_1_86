@@ -16,14 +16,10 @@ public class Suggestion {
 
     @ManyToOne
     @JoinColumn(name = "farm_id")
-    private Farm id; // Named 'id' or 'farm' based on repo naming, but tests use .getFarm()
-
-    @ManyToOne
-    private Farm farm;
+    private Farm farm; // Corrected: removed the duplicate 'id' name
 
     private String suggestedCrops;
     private String suggestedFertilizers;
-
     private LocalDateTime createdAt;
 
     @PrePersist
