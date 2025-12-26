@@ -4,6 +4,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "farms")
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,7 +17,8 @@ public class Farm {
     private Double soilPH;
     private Double waterLevel;
     private String season;
-    
+
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User owner;
 }

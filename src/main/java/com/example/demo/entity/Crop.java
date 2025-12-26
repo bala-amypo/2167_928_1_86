@@ -4,6 +4,7 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "crops")
 @Data
 @Builder
 @NoArgsConstructor

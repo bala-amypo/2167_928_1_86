@@ -1,16 +1,17 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+import javax.persistence.*;
 
 @Entity
+@Table(name = "fertilizers")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Fertilizer {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String npkRatio;

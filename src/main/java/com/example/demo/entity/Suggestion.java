@@ -5,6 +5,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "suggestions")
 @Data
 @Builder
 @NoArgsConstructor
@@ -18,10 +19,11 @@ public class Suggestion {
     private LocalDateTime createdAt;
 
     @ManyToOne
+    @JoinColumn(name = "farm_id")
     private Farm farm;
 
     @PrePersist
-    protected void onCreate() {
+    public void prePersist() {
         this.createdAt = LocalDateTime.now();
     }
 }
