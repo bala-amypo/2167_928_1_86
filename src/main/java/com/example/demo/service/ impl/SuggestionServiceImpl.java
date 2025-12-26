@@ -41,8 +41,7 @@ public class SuggestionServiceImpl implements SuggestionService {
 
     @Override
     public Suggestion getSuggestion(Long id) {
-        return suggestionRepository.findById(id).orElseThrow(() -> 
-            new com.example.demo.exception.ResourceNotFoundException("Suggestion not found"));
+        return suggestionRepository.findById(id).orElseThrow(() -> new RuntimeException("Suggestion not found"));
     }
 
     @Override
