@@ -4,19 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity @Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class Suggestion {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
     @JoinColumn(name = "farm_id")
-    private Farm farm; // Corrected: removed the duplicate 'id' name
+    private Farm farm;
 
     private String suggestedCrops;
     private String suggestedFertilizers;
