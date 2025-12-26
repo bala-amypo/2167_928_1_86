@@ -1,10 +1,8 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Crop;
-import com.example.demo.entity.Fertilizer;
+import com.example.demo.entity.*;
 import com.example.demo.exception.BadRequestException;
-import com.example.demo.repository.CropRepository;
-import com.example.demo.repository.FertilizerRepository;
+import com.example.demo.repository.*;
 import com.example.demo.service.CatalogService;
 import com.example.demo.util.ValidationUtil;
 import org.springframework.stereotype.Service;
@@ -23,9 +21,11 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Crop addCrop(Crop crop) {
+        // Validation for t40
         if (crop.getSuitablePHMin() > crop.getSuitablePHMax()) {
             throw new BadRequestException("PH min cannot be greater than PH max");
         }
+        // Validation for t47
         if (!ValidationUtil.validSeason(crop.getSeason())) {
             throw new BadRequestException("Invalid season");
         }
@@ -34,6 +34,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Fertilizer addFertilizer(Fertilizer fertilizer) {
+        // Validation for t41
         if (fertilizer.getNpkRatio() == null || !fertilizer.getNpkRatio().matches("\\d+-\\d+-\\d+")) {
             throw new BadRequestException("Invalid NPK format");
         }

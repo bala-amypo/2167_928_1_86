@@ -1,8 +1,7 @@
 package com.example.demo.dto;
+import lombok.*;
 
-import lombok.Data;
-
-@Data
+@Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class FarmRequest {
     private String name;
     private Double soilPH;
