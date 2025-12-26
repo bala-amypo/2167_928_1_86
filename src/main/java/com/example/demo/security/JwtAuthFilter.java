@@ -1,10 +1,11 @@
 package com.example.demo.security;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.*;
-import org.springframework.security.core.*;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -17,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final JwtTokenProvider provider;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     protected void doFilterInternal(
@@ -31,11 +32,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         if (header != null && header.startsWith("Bearer ")) {
 
             String token = header.substring(7);
-            try {
-                Long userId = provider.getUserId(token);
-                String role = provider.getRole(token);
 
-                Authentication auth =
+            if (jwtTokenProvider.validateToken(token)) {
+
+                String email = jwtTokenProvider.getEmail(token);
+                String role = jwtTokenProvider.getRole(token);
+                Long userId = jwtTokenProvider.getUserId(token);
+
+                UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
                                 userId,
                                 null,
@@ -43,8 +47,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         );
 
                 SecurityContextHolder.getContext().setAuthentication(auth);
-
-            } catch (Exception ignored) {}
+            }
         }
 
         filterChain.doFilter(request, response);
