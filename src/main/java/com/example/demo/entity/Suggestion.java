@@ -6,7 +6,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "suggestions")
 @Data
 @Builder
 @NoArgsConstructor
@@ -18,17 +17,15 @@ public class Suggestion {
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "farm_id", nullable = false)
     private Farm farm;
 
     private String suggestedCrops;
     private String suggestedFertilizers;
 
-    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
+        createdAt = LocalDateTime.now();
     }
 }
