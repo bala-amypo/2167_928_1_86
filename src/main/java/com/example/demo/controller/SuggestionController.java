@@ -4,12 +4,10 @@ import com.example.demo.entity.Suggestion;
 import com.example.demo.service.SuggestionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 
 @RestController
-@RequestMapping("/suggestions")
+@RequestMapping("/api/suggestions")
 public class SuggestionController {
-
     private final SuggestionService suggestionService;
 
     public SuggestionController(SuggestionService suggestionService) {
@@ -21,13 +19,8 @@ public class SuggestionController {
         return ResponseEntity.ok(suggestionService.generateSuggestion(farmId));
     }
 
-    @GetMapping("/{suggestionId}")
-    public ResponseEntity<Suggestion> getSuggestion(@PathVariable Long suggestionId) {
-        return ResponseEntity.ok(suggestionService.getSuggestion(suggestionId));
-    }
-
-    @GetMapping("/farm/{farmId}")
-    public ResponseEntity<List<Suggestion>> getSuggestionsByFarm(@PathVariable Long farmId) {
-        return ResponseEntity.ok(suggestionService.getSuggestionsByFarm(farmId));
+    @GetMapping("/{id}")
+    public ResponseEntity<Suggestion> getSuggestion(@PathVariable Long id) {
+        return ResponseEntity.ok(suggestionService.getSuggestion(id));
     }
 }
