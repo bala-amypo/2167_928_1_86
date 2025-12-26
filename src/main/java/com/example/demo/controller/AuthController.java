@@ -1,9 +1,14 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.AuthRequest;
+import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
+import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -11,9 +16,14 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(UserService userService, /* other dependencies */) {
+    // Fixed constructor signature: Ensures all types are explicitly defined and no trailing commas exist
+    public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/register")
@@ -23,8 +33,27 @@ public class AuthController {
                 .email(req.getEmail())
                 .password(req.getPassword())
                 .build();
-        
-        // Corrected: call register() instead of registerUser() [cite: 74, 107]
+        // Maps DTO to User and calls userService.register 
         return ResponseEntity.ok(userService.register(user));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest ar) {
+        User user = userService.findByEmail(ar.getEmail());
+        
+        // Verify password using PasswordEncoder.matches [cite: 75]
+        if (passwordEncoder.matches(ar.getPassword(), user.getPassword())) {
+            String token = jwtTokenProvider.createToken(user.getId(), user.getEmail(), user.getRole());
+            AuthResponse response = AuthResponse.builder()
+                    .token(token)
+                    .userId(user.getId())
+                    .email(user.getEmail())
+                    .role(user.getRole())
+                    .build();
+            return ResponseEntity.ok(response);
+        }
+        
+        // On invalid credentials, return HTTP 401 [cite: 76]
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }
