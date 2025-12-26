@@ -2,10 +2,14 @@ package com.example.demo.repository;
 
 import com.example.demo.entity.Fertilizer;
 import org.springframework.data.jpa.repository.JpaRepository;
-import java.util.*;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+import java.util.List;
 
+@Repository
 public interface FertilizerRepository extends JpaRepository<Fertilizer, Long> {
-    default List<Fertilizer> findByCropName(String crop) {
-        return findAll();
-    }
+    // Required for test t37
+    @Query("SELECT f FROM Fertilizer f WHERE f.recommendedForCrops LIKE %:cropName%")
+    List<Fertilizer> findByCropName(@Param("cropName") String cropName);
 }
