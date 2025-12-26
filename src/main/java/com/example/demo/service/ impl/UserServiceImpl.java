@@ -19,7 +19,6 @@ public class UserServiceImpl implements UserService {
     public User register(User user) {
         if (repo.findByEmail(user.getEmail()).isPresent())
             throw new BadRequestException("Email already exists");
-
         user.setPassword(encoder.encode(user.getPassword()));
         if (user.getRole() == null) user.setRole("USER");
         return repo.save(user);
@@ -30,7 +29,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public User findById(Long id) {
-        return repo.findById(id).orElseThrow(() ->
-            new BadRequestException("User not found"));
+        return repo.findById(id)
+                .orElseThrow(() -> new BadRequestException("User not found"));
     }
 }

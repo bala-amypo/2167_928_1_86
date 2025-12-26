@@ -5,8 +5,7 @@ import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.*;
 import com.example.demo.service.FarmService;
 import com.example.demo.util.ValidationUtil;
-
-import java.util.List;
+import java.util.*;
 
 public class FarmServiceImpl implements FarmService {
 
@@ -21,13 +20,10 @@ public class FarmServiceImpl implements FarmService {
     public Farm createFarm(Farm farm, Long ownerId) {
         User owner = userRepo.findById(ownerId)
                 .orElseThrow(() -> new IllegalArgumentException("Owner"));
-
         if (farm.getSoilPH() < 3 || farm.getSoilPH() > 10)
             throw new IllegalArgumentException("pH");
-
         if (!ValidationUtil.validSeason(farm.getSeason()))
             throw new IllegalArgumentException("season");
-
         farm.setOwner(owner);
         return farmRepo.save(farm);
     }

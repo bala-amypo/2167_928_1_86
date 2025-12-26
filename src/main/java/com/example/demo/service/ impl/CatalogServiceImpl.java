@@ -5,7 +5,6 @@ import com.example.demo.exception.BadRequestException;
 import com.example.demo.repository.*;
 import com.example.demo.service.CatalogService;
 import com.example.demo.util.ValidationUtil;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,17 +21,14 @@ public class CatalogServiceImpl implements CatalogService {
     public Crop addCrop(Crop crop) {
         if (crop.getSuitablePHMin() > crop.getSuitablePHMax())
             throw new BadRequestException("PH min");
-
         if (!ValidationUtil.validSeason(crop.getSeason()))
             throw new BadRequestException("Invalid season");
-
         return cropRepo.save(crop);
     }
 
     public Fertilizer addFertilizer(Fertilizer f) {
         if (!f.getNpkRatio().matches("\\d+-\\d+-\\d+"))
             throw new BadRequestException("NPK");
-
         return fertRepo.save(f);
     }
 

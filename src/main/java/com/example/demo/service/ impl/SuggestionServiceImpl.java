@@ -3,8 +3,8 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.*;
 import com.example.demo.repository.SuggestionRepository;
 import com.example.demo.service.*;
-
 import java.util.stream.Collectors;
+import java.util.*;
 
 public class SuggestionServiceImpl implements SuggestionService {
 
@@ -21,12 +21,11 @@ public class SuggestionServiceImpl implements SuggestionService {
     public Suggestion generateSuggestion(Long farmId) {
         Farm farm = farmService.getFarmById(farmId);
 
-        var crops = catalogService.findSuitableCrops(
+        List<Crop> crops = catalogService.findSuitableCrops(
                 farm.getSoilPH(), farm.getWaterLevel(), farm.getSeason());
 
-        var cropNames = crops.stream().map(Crop::getName).toList();
-
-        var ferts = catalogService.findFertilizersForCrops(cropNames);
+        List<String> cropNames = crops.stream().map(Crop::getName).toList();
+        List<Fertilizer> ferts = catalogService.findFertilizersForCrops(cropNames);
 
         Suggestion s = Suggestion.builder()
                 .farm(farm)
@@ -42,7 +41,7 @@ public class SuggestionServiceImpl implements SuggestionService {
         return repo.findById(id).orElse(null);
     }
 
-    public java.util.List<Suggestion> getSuggestionsByFarm(Long farmId) {
+    public List<Suggestion> getSuggestionsByFarm(Long farmId) {
         return repo.findByFarmId(farmId);
     }
 }
