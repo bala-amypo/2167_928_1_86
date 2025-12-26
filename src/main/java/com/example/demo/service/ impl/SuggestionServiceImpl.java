@@ -24,7 +24,7 @@ public class SuggestionServiceImpl implements SuggestionService {
     public Suggestion generateSuggestion(Long farmId) {
         Farm farm = farmService.getFarmById(farmId);
         
-        // Find suitable crops
+        // Logic to find suitable crops
         List<Crop> crops = catalogService.findSuitableCrops(
             farm.getSoilPH(), 
             farm.getWaterLevel(), 
@@ -35,10 +35,9 @@ public class SuggestionServiceImpl implements SuggestionService {
                 .map(Crop::getName)
                 .collect(Collectors.toList());
 
-        // Find fertilizers for those crops
+        // Logic to find fertilizers for those crops
         List<Fertilizer> ferts = catalogService.findFertilizersForCrops(cropNames);
 
-        // Build result strings
         String suggestedCrops = String.join(",", cropNames);
         String suggestedFertilizers = ferts.stream()
                 .map(Fertilizer::getName)
@@ -57,5 +56,11 @@ public class SuggestionServiceImpl implements SuggestionService {
     public Suggestion getSuggestion(Long id) {
         return suggestionRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Suggestion not found"));
+    }
+
+    // THIS IS THE MISSING METHOD CAUSING YOUR ERROR
+    @Override
+    public List<Suggestion> getSuggestionsByFarm(Long farmId) {
+        return suggestionRepo.findByFarmId(farmId);
     }
 }
