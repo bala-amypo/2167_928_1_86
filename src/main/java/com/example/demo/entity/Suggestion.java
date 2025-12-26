@@ -1,5 +1,4 @@
 package com.example.demo.entity;
-
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -8,17 +7,12 @@ import java.time.LocalDateTime;
 public class Suggestion {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "farm_id")
+    @ManyToOne @JoinColumn(name = "farm_id")
     private Farm farm;
-
     private String suggestedCrops;
     private String suggestedFertilizers;
     private LocalDateTime createdAt;
 
     @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-    }
+    public void prePersist() { this.createdAt = LocalDateTime.now(); }
 }

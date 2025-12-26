@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CatalogServiceImpl implements CatalogService { // Must be public
+public class CatalogServiceImpl implements CatalogService {
     private final CropRepository cropRepository;
     private final FertilizerRepository fertilizerRepository;
 
@@ -21,25 +21,17 @@ public class CatalogServiceImpl implements CatalogService { // Must be public
 
     @Override
     public Crop addCrop(Crop crop) {
-        // Validation for t40
-        if (crop.getSuitablePHMin() != null && crop.getSuitablePHMax() != null) {
-            if (crop.getSuitablePHMin() > crop.getSuitablePHMax()) {
-                throw new BadRequestException("PH min cannot be greater than PH max");
-            }
-        }
-        // Validation for t47
-        if (!ValidationUtil.validSeason(crop.getSeason())) {
+        if (crop.getSuitablePHMin() > crop.getSuitablePHMax()) 
+            throw new BadRequestException("PH min cannot be greater than PH max");
+        if (!ValidationUtil.validSeason(crop.getSeason())) 
             throw new BadRequestException("Invalid season");
-        }
         return cropRepository.save(crop);
     }
 
     @Override
     public Fertilizer addFertilizer(Fertilizer fertilizer) {
-        // Validation for t41
-        if (fertilizer.getNpkRatio() == null || !fertilizer.getNpkRatio().matches("\\d+-\\d+-\\d+")) {
+        if (fertilizer.getNpkRatio() == null || !fertilizer.getNpkRatio().matches("\\d+-\\d+-\\d+"))
             throw new BadRequestException("Invalid NPK format");
-        }
         return fertilizerRepository.save(fertilizer);
     }
 
@@ -51,8 +43,7 @@ public class CatalogServiceImpl implements CatalogService { // Must be public
     @Override
     public List<Fertilizer> findFertilizersForCrops(List<String> cropNames) {
         return fertilizerRepository.findAll().stream()
-                .filter(f -> f.getRecommendedForCrops() != null && 
-                        cropNames.stream().anyMatch(name -> f.getRecommendedForCrops().contains(name)))
+                .filter(f -> cropNames.stream().anyMatch(name -> f.getRecommendedForCrops().contains(name)))
                 .collect(Collectors.toList());
     }
 }
