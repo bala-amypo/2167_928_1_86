@@ -1,14 +1,8 @@
+// AuthRequest.java
 package com.example.demo.dto;
-
 import lombok.*;
-
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class AuthResponse {
-    private String token;
-    private Long userId;
+@Data @AllArgsConstructor @NoArgsConstructor
+public class AuthRequest {
     private String email;
-    private String role;
+    private String password;
 }
