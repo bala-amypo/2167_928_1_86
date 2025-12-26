@@ -24,9 +24,11 @@ public class SuggestionServiceImpl implements SuggestionService {
         Farm farm = farmService.getFarmById(farmId);
         List<Crop> crops = catalogService.findSuitableCrops(farm.getSoilPH(), farm.getWaterLevel(), farm.getSeason());
         
-        String cropNames = crops.stream().map(Crop::getName).collect(Collectors.joining(","));
-        List<Fertilizer> ferts = catalogService.findFertilizersForCrops(crops.stream().map(Crop::getName).toList());
-        String fertNames = ferts.stream().map(Fertilizer::getName).collect(Collectors.joining(","));
+        String cropNames = crops.isEmpty() ? "" : crops.stream().map(Crop::getName).collect(Collectors.joining(","));
+        
+        List<String> listNames = crops.stream().map(Crop::getName).collect(Collectors.toList());
+        List<Fertilizer> ferts = catalogService.findFertilizersForCrops(listNames);
+        String fertNames = ferts.isEmpty() ? "" : ferts.stream().map(Fertilizer::getName).collect(Collectors.joining(","));
 
         return suggestionRepo.save(Suggestion.builder()
                 .farm(farm)
@@ -36,12 +38,12 @@ public class SuggestionServiceImpl implements SuggestionService {
     }
 
     @Override
-    public Suggestion getSuggestion(Long id) {
-        return suggestionRepo.findById(id).orElse(null);
+    public List<Suggestion> getSuggestionsByFarm(Long farmId) {
+        return suggestionRepo.findByFarmId(farmId);
     }
 
     @Override
-    public List<Suggestion> getSuggestionsByFarm(Long farmId) {
-        return suggestionRepo.findByFarmId(farmId);
+    public Suggestion getSuggestion(Long id) {
+        return suggestionRepo.findById(id).orElseThrow(() -> new RuntimeException("Not Found"));
     }
 }
