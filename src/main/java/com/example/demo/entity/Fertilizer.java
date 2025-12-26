@@ -1,7 +1,7 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.*; // Change from javax to jakarta
 import lombok.*;
-import javax.persistence.*;
 
 @Entity
 @Table(name = "fertilizers")
