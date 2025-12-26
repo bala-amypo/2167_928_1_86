@@ -1,13 +1,28 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
-@Entity @Data @Builder @NoArgsConstructor @AllArgsConstructor
+@Entity
+@Table(name = "fertilizers")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Fertilizer {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank
     private String name;
+
+    @NotBlank
     private String npkRatio;
-    private String recommendedForCrops; // Expected by t27 as a CSV string
+
+    @NotBlank
+    @Size(max = 500)
+    private String recommendedForCrops;
 }
