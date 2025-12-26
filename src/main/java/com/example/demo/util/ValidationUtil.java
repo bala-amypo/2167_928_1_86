@@ -1,9 +1,12 @@
 package com.example.demo.util;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ValidationUtil {
-    public static boolean validSeason(String s) {
-        return List.of("Kharif", "Rabi", "Summer").contains(s);
+    private static final List<String> SEASONS = Arrays.asList("Kharif", "Rabi", "Summer");
+
+    public static boolean validSeason(String season) {
+        return season != null && SEASONS.contains(season);
     }
 }
