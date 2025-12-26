@@ -7,6 +7,6 @@ public class ValidationUtil {
     private static final List<String> SEASONS = Arrays.asList("Kharif", "Rabi", "Summer");
 
     public static boolean validSeason(String season) {
-        return season != null && SEASONS.contains(season); // Required for t58 [cite: 215, 389]
+        return season != null && SEASONS.contains(season);
     }
 }

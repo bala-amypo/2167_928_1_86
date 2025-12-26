@@ -23,11 +23,9 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Crop addCrop(Crop crop) {
-        // Rule: suitablePHMin <= suitablePHMax [cite: 220, 261, 347]
         if (crop.getSuitablePHMin() > crop.getSuitablePHMax()) {
             throw new BadRequestException("PH min cannot be greater than PH max");
         }
-        // Rule: Season must be valid [cite: 221, 261, 370]
         if (!ValidationUtil.validSeason(crop.getSeason())) {
             throw new BadRequestException("Invalid season");
         }
@@ -36,8 +34,7 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public Fertilizer addFertilizer(Fertilizer fertilizer) {
-        // Rule: NPK must match numeric pattern [cite: 226, 262, 350]
-        if (!fertilizer.getNpkRatio().matches("\\d+-\\d+-\\d+")) {
+        if (fertilizer.getNpkRatio() == null || !fertilizer.getNpkRatio().matches("\\d+-\\d+-\\d+")) {
             throw new BadRequestException("Invalid NPK format");
         }
         return fertilizerRepository.save(fertilizer);
@@ -50,9 +47,8 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public List<Fertilizer> findFertilizersForCrops(List<String> cropNames) {
-        // Logic to return fertilizers matching any of the given crop names [cite: 263]
         return fertilizerRepository.findAll().stream()
-            .filter(f -> cropNames.stream().anyMatch(name -> f.getRecommendedForCrops().contains(name)))
-            .collect(Collectors.toList());
+                .filter(f -> cropNames.stream().anyMatch(name -> f.getRecommendedForCrops().contains(name)))
+                .collect(Collectors.toList());
     }
 }
