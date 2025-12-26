@@ -3,16 +3,15 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+@Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "farms")
 public class Farm {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Long id;
 
     @ManyToOne
