@@ -16,7 +16,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -35,18 +35,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             if (jwtTokenProvider.validateToken(token)) {
 
-                String email = jwtTokenProvider.getEmail(token);
-                String role = jwtTokenProvider.getRole(token);
                 Long userId = jwtTokenProvider.getUserId(token);
+                String role = jwtTokenProvider.getRole(token);
 
-                UsernamePasswordAuthenticationToken auth =
+                UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 userId,
                                 null,
                                 List.of(new SimpleGrantedAuthority("ROLE_" + role))
                         );
 
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                SecurityContextHolder.getContext()
+                        .setAuthentication(authentication);
             }
         }
 
