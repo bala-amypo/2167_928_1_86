@@ -12,7 +12,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler({BadRequestException.class, IllegalArgumentException.class})
-    public ResponseEntity<String> handleBad(RuntimeException ex) {
-        return ResponseEntity.badRequest().body(ex.getMessage());
+    public ResponseEntity<String> handleBadRequest(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 }
