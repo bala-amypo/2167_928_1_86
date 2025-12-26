@@ -10,36 +10,48 @@ import com.example.demo.service.FarmService;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 @Transactional
 public class FarmServiceImpl implements FarmService {
 
-    private final FarmRepository farmRepo;
-    private final UserRepository userRepo;
+    private final FarmRepository farmRepository;
+    private final UserRepository userRepository;
 
-    public FarmServiceImpl(FarmRepository farmRepo, UserRepository userRepo) {
-        this.farmRepo = farmRepo;
-        this.userRepo = userRepo;
+    public FarmServiceImpl(FarmRepository farmRepository,
+                           UserRepository userRepository) {
+        this.farmRepository = farmRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public Farm createFarm(Farm farm, Long ownerId) {
-        if (farm.getSoilPH() < 3.0 || farm.getSoilPH() > 10.0)
+
+        if (farm.getSoilPH() < 3.0 || farm.getSoilPH() > 10.0) {
             throw new IllegalArgumentException("Invalid pH");
+        }
 
-        if (!Set.of("Kharif", "Rabi", "Summer").contains(farm.getSeason()))
+        if (!Set.of("Kharif", "Rabi", "Summer").contains(farm.getSeason())) {
             throw new BadRequestException("Invalid season");
+        }
 
-        User user = userRepo.findById(ownerId)
+        User user = userRepository.findById(ownerId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         farm.setOwner(user);
-        return farmRepo.save(farm);
+        return farmRepository.save(farm);
     }
 
     @Override
-    public Farm getFarmById(Long id) {
-        return farmRepo.findById(id)
+    public List<Farm> getFarmsByOwner(Long ownerId) {
+        return farmRepository.findByOwnerId(ownerId);
+    }
+
+    @Override
+    public Farm getFarmById(Long farmId) {
+        return farmRepository.findById(farmId)
                 .orElseThrow(() -> new ResourceNotFoundException("Farm not found"));
     }
 }
