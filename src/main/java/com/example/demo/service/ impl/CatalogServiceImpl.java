@@ -4,11 +4,12 @@ import com.example.demo.entity.Crop;
 import com.example.demo.entity.Fertilizer;
 import com.example.demo.repository.CropRepository;
 import com.example.demo.repository.FertilizerRepository;
+import com.example.demo.service.CatalogService;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CatalogServiceImpl {
+public class CatalogServiceImpl implements CatalogService {
 
     private final CropRepository cropRepository;
     private final FertilizerRepository fertilizerRepository;
@@ -19,14 +20,17 @@ public class CatalogServiceImpl {
         this.fertilizerRepository = fertilizerRepository;
     }
 
+    @Override
     public Crop addCrop(Crop crop) {
         return cropRepository.save(crop);
     }
 
+    @Override
     public Fertilizer addFertilizer(Fertilizer fertilizer) {
         return fertilizerRepository.save(fertilizer);
     }
 
+    @Override
     public List<Crop> findSuitableCrops(double ph, double water, String season) {
         return cropRepository.findAll().stream()
                 .filter(c ->
@@ -37,11 +41,13 @@ public class CatalogServiceImpl {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<Fertilizer> findFertilizersForCrops(List<String> cropNames) {
         return fertilizerRepository.findAll().stream()
                 .filter(f ->
                         cropNames.stream()
-                                .anyMatch(name -> f.getRecommendedForCrops().contains(name)))
+                                .anyMatch(name ->
+                                        f.getRecommendedForCrops().contains(name)))
                 .collect(Collectors.toList());
     }
 }
