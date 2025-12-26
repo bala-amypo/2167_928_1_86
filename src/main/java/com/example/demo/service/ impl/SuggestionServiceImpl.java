@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class SuggestionServiceImpl implements SuggestionService {
-
     private final FarmService farmService;
     private final CatalogService catalogService;
     private final SuggestionRepository suggestionRepository;
@@ -22,22 +21,16 @@ public class SuggestionServiceImpl implements SuggestionService {
 
     @Override
     public Suggestion generateSuggestion(Long farmId) {
-        // Load farm or propagate ResourceNotFoundException [cite: 67]
         Farm farm = farmService.getFarmById(farmId);
-        
         List<Crop> crops = catalogService.findSuitableCrops(farm.getSoilPH(), farm.getWaterLevel(), farm.getSeason());
         
-        String cropCsv = crops.stream()
-                .map(Crop::getName)
-                .collect(Collectors.joining(","));
-
         List<String> cropNames = crops.stream().map(Crop::getName).collect(Collectors.toList());
+        String cropCsv = String.join(",", cropNames);
 
         String fertCsv = catalogService.findFertilizersForCrops(cropNames).stream()
                 .map(Fertilizer::getName)
                 .collect(Collectors.joining(","));
 
-        // Build and save. prePersist handles createdAt [cite: 70, 71]
         Suggestion suggestion = Suggestion.builder()
                 .farm(farm)
                 .suggestedCrops(cropCsv)
@@ -49,8 +42,7 @@ public class SuggestionServiceImpl implements SuggestionService {
 
     @Override
     public Suggestion getSuggestion(Long id) {
-        return suggestionRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Suggestion not found"));
+        return suggestionRepository.findById(id).orElseThrow(() -> new RuntimeException("Suggestion not found"));
     }
 
     @Override
