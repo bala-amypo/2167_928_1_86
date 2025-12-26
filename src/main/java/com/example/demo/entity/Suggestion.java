@@ -5,11 +5,12 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "suggestions")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 public class Suggestion {
 
     @Id
@@ -21,12 +22,10 @@ public class Suggestion {
 
     private String suggestedCrops;
     private String suggestedFertilizers;
-
     private LocalDateTime createdAt;
 
-    // 🔴 TESTS CALL THIS DIRECTLY
     @PrePersist
-    public void prePersist() {
+    void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 }
