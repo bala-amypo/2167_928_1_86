@@ -19,9 +19,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User register(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) 
             throw new BadRequestException("Email already exists");
-        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -32,7 +32,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(Long id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new BadRequestException("User not found"));
+        return userRepository.findById(id).orElse(null);
     }
 }

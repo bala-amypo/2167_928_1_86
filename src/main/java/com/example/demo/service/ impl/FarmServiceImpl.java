@@ -2,11 +2,11 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.Farm;
 import com.example.demo.entity.User;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.FarmRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.FarmService;
 import com.example.demo.util.ValidationUtil;
-import com.example.demo.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -22,9 +22,8 @@ public class FarmServiceImpl implements FarmService {
 
     @Override
     public Farm createFarm(Farm farm, Long userId) {
-        if (!ValidationUtil.validPH(farm.getSoilPH())) {
+        if (!ValidationUtil.validPH(farm.getSoilPH())) 
             throw new IllegalArgumentException("Invalid pH level");
-        }
         User owner = userRepo.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         farm.setOwner(owner);

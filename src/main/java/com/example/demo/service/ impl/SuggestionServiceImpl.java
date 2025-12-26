@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class SuggestionServiceImpl implements SuggestionService {
-
     private final FarmService farmService;
     private final CatalogService catalogService;
     private final SuggestionRepository suggestionRepo;
@@ -23,42 +22,24 @@ public class SuggestionServiceImpl implements SuggestionService {
     @Override
     public Suggestion generateSuggestion(Long farmId) {
         Farm farm = farmService.getFarmById(farmId);
+        List<Crop> crops = catalogService.findSuitableCrops(farm.getSoilPH(), farm.getWaterLevel(), farm.getSeason());
         
-        // Logic to find suitable crops
-        List<Crop> crops = catalogService.findSuitableCrops(
-            farm.getSoilPH(), 
-            farm.getWaterLevel(), 
-            farm.getSeason()
-        );
-        
-        List<String> cropNames = crops.stream()
-                .map(Crop::getName)
-                .collect(Collectors.toList());
+        String cropNames = crops.stream().map(Crop::getName).collect(Collectors.joining(","));
+        List<Fertilizer> ferts = catalogService.findFertilizersForCrops(crops.stream().map(Crop::getName).toList());
+        String fertNames = ferts.stream().map(Fertilizer::getName).collect(Collectors.joining(","));
 
-        // Logic to find fertilizers for those crops
-        List<Fertilizer> ferts = catalogService.findFertilizersForCrops(cropNames);
-
-        String suggestedCrops = String.join(",", cropNames);
-        String suggestedFertilizers = ferts.stream()
-                .map(Fertilizer::getName)
-                .collect(Collectors.joining(","));
-
-        Suggestion suggestion = Suggestion.builder()
+        return suggestionRepo.save(Suggestion.builder()
                 .farm(farm)
-                .suggestedCrops(suggestedCrops)
-                .suggestedFertilizers(suggestedFertilizers)
-                .build();
-            
-        return suggestionRepo.save(suggestion);
+                .suggestedCrops(cropNames)
+                .suggestedFertilizers(fertNames)
+                .build());
     }
 
     @Override
     public Suggestion getSuggestion(Long id) {
-        return suggestionRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Suggestion not found"));
+        return suggestionRepo.findById(id).orElse(null);
     }
 
-    // THIS IS THE MISSING METHOD CAUSING YOUR ERROR
     @Override
     public List<Suggestion> getSuggestionsByFarm(Long farmId) {
         return suggestionRepo.findByFarmId(farmId);
