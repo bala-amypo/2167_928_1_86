@@ -12,7 +12,6 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    // Matches the 2-arg instantiation in tests
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -23,20 +22,16 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new BadRequestException("Email already exists");
         }
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        if (user.getRole() == null) user.setRole("USER");
         return userRepository.save(user);
     }
 
     @Override
     public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new BadRequestException("Email not found"));
+        return userRepository.findByEmail(email).orElse(null);
     }
 
     @Override
     public User findById(Long id) {
-        // Required for test t59
         return userRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("User not found"));
     }
