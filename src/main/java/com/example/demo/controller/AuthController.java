@@ -1,13 +1,9 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.AuthRequest;
-import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
-import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,33 +11,20 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
-    private final JwtTokenProvider jwtTokenProvider;
-    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder) {
+    public AuthController(UserService userService, /* other dependencies */) {
         this.userService = userService;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest req) {
+    public ResponseEntity<User> register(@RequestBody RegisterRequest req) {
         User user = User.builder()
                 .name(req.getName())
                 .email(req.getEmail())
                 .password(req.getPassword())
-                .role("USER")
                 .build();
-        return ResponseEntity.ok(userService.registerUser(user));
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest req) {
-        User user = userService.findByEmail(req.getEmail());
-        if (passwordEncoder.matches(req.getPassword(), user.getPassword())) {
-            String token = jwtTokenProvider.createToken(user.getId(), user.getEmail(), user.getRole());
-            return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getEmail(), user.getRole()));
-        }
-        return ResponseEntity.status(401).build();
+        
+        // Corrected: call register() instead of registerUser() [cite: 74, 107]
+        return ResponseEntity.ok(userService.register(user));
     }
 }
