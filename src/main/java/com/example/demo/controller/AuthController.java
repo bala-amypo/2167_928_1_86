@@ -9,8 +9,6 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -39,7 +37,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody AuthRequest req) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest req) {
 
         User user = userService.findByEmail(req.getEmail());
 
@@ -50,6 +48,6 @@ public class AuthController {
         String token = jwtTokenProvider.createToken(
                 user.getId(), user.getEmail(), user.getRole());
 
-        return ResponseEntity.ok(Map.of("token", token));
+        return ResponseEntity.ok(new AuthResponse(token));
     }
 }
