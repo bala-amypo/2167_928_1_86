@@ -1,10 +1,9 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*; // Change from javax to jakarta
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "farms")
 @Data
 @Builder
 @NoArgsConstructor
@@ -14,12 +13,12 @@ public class Farm {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User owner;
-
     private String name;
     private Double soilPH;
     private Double waterLevel;
     private String season;
+
+    @ManyToOne
+    @JoinColumn(name = "owner_id")
+    private User owner;
 }
