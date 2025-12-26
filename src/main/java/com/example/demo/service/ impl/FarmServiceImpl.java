@@ -4,11 +4,12 @@ import com.example.demo.entity.Farm;
 import com.example.demo.entity.User;
 import com.example.demo.repository.FarmRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.FarmService;
 
 import java.util.List;
 import java.util.Set;
 
-public class FarmServiceImpl {
+public class FarmServiceImpl implements FarmService {
 
     private final FarmRepository farmRepository;
     private final UserRepository userRepository;
@@ -19,6 +20,7 @@ public class FarmServiceImpl {
         this.userRepository = userRepository;
     }
 
+    @Override
     public Farm createFarm(Farm farm, Long ownerId) {
 
         if (farm.getSoilPH() < 3 || farm.getSoilPH() > 10) {
@@ -36,11 +38,13 @@ public class FarmServiceImpl {
         return farmRepository.save(farm);
     }
 
+    @Override
     public Farm getFarmById(Long id) {
         return farmRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Farm not found"));
     }
 
+    @Override
     public List<Farm> getFarmsByOwner(Long ownerId) {
         return farmRepository.findByOwnerId(ownerId);
     }

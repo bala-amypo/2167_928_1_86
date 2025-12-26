@@ -2,17 +2,18 @@ package com.example.demo;
 
 import com.example.demo.entity.*;
 import com.example.demo.repository.SuggestionRepository;
+import com.example.demo.service.FarmService;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class SuggestionServiceImpl {
 
-    private final FarmServiceImpl farmService;
+    private final FarmService farmService;
     private final CatalogServiceImpl catalogService;
     private final SuggestionRepository suggestionRepository;
 
-    public SuggestionServiceImpl(FarmServiceImpl farmService,
+    public SuggestionServiceImpl(FarmService farmService,
                                  CatalogServiceImpl catalogService,
                                  SuggestionRepository suggestionRepository) {
         this.farmService = farmService;

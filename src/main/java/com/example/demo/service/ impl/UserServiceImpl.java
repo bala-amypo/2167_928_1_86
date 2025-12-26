@@ -24,4 +24,10 @@ public class UserServiceImpl {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
+
+    // 🔥 REQUIRED BY TEST
+    public User findById(long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 }
