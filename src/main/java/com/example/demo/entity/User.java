@@ -1,9 +1,11 @@
 package com.example.demo.entity;
 
+import jakarta.persistence.*;
 import lombok.*;
-import javax.persistence.*;
+import java.util.List;
 
 @Entity
+@Table(name = "users")
 @Data
 @Builder
 @NoArgsConstructor
@@ -13,8 +15,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Column(unique = true)
     private String email;
     private String password;
-    private String role;
-    private String username;
+    private String role; // "USER" or "ADMIN"
 }

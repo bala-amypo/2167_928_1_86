@@ -22,24 +22,22 @@ public class SuggestionServiceImpl implements SuggestionService {
 
     @Override
     public Suggestion generateSuggestion(Long farmId) {
+        // Load farm or propagate ResourceNotFoundException [cite: 67]
         Farm farm = farmService.getFarmById(farmId);
         
         List<Crop> crops = catalogService.findSuitableCrops(farm.getSoilPH(), farm.getWaterLevel(), farm.getSeason());
         
-        // Joining crop names with commas for the entity
         String cropCsv = crops.stream()
                 .map(Crop::getName)
                 .collect(Collectors.joining(","));
 
-        List<String> cropNames = crops.stream()
-                .map(Crop::getName)
-                .collect(Collectors.toList());
+        List<String> cropNames = crops.stream().map(Crop::getName).collect(Collectors.toList());
 
-        // Fetching and joining fertilizers based on suggested crops
         String fertCsv = catalogService.findFertilizersForCrops(cropNames).stream()
                 .map(Fertilizer::getName)
                 .collect(Collectors.joining(","));
 
+        // Build and save. prePersist handles createdAt [cite: 70, 71]
         Suggestion suggestion = Suggestion.builder()
                 .farm(farm)
                 .suggestedCrops(cropCsv)
