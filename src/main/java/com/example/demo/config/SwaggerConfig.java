@@ -1,10 +1,8 @@
 package com.example.demo.config;
 
-import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.security.SecurityRequirement;
-import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.*;
+import io.swagger.v3.oas.models.info.*;
+import io.swagger.v3.oas.models.security.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,16 +11,26 @@ public class SwaggerConfig {
 
     @Bean
     public OpenAPI api() {
-        final String securitySchemeName = "bearerAuth";
+
         return new OpenAPI()
-                .info(new Info().title("Agro-Consultant API").version("1.0"))
-                .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
+                .info(new Info()
+                        .title("Crop & Fertilizer Suggestion API")
+                        .description("REST API for providing intelligent crop and fertilizer suggestions based on farm conditions")
+                        .version("1.0.0")
+                        .contact(new Contact()
+                                .name("API Support")
+                                .email("support@example.com")
+                        )
+                )
+                .addSecurityItem(new SecurityRequirement().addList("JWT"))
                 .components(new Components()
-                        .addSecuritySchemes(securitySchemeName,
+                        .addSecuritySchemes("JWT",
                                 new SecurityScheme()
-                                        .name(securitySchemeName)
+                                        .name("JWT")
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
-                                        .bearerFormat("JWT")));
+                                        .bearerFormat("JWT")
+                        )
+                );
     }
 }
