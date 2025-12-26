@@ -3,11 +3,12 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+@Entity
+@Table(name = "farms")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 public class Farm {
 
     @Id
