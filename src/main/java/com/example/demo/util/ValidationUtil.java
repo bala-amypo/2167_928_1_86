@@ -11,7 +11,7 @@ public class ValidationUtil {
     }
 
     public static boolean validPH(Double ph) {
-        // Required for t42 (pH must be between 3.0 and 10.0)
+        // Required for t42: pH must be between 3.0 and 10.0
         return ph != null && ph >= 3.0 && ph <= 10.0;
     }
 }
