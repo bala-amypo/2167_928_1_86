@@ -1,60 +1,54 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Crop;
-import com.example.demo.entity.Farm;
-import com.example.demo.entity.Suggestion;
-import com.example.demo.repository.SuggestionRepository;
+import com.example.demo.entity.Fertilizer;
+import com.example.demo.exception.BadRequestException;
+import com.example.demo.repository.CropRepository;
+import com.example.demo.repository.FertilizerRepository;
 import com.example.demo.service.CatalogService;
-import com.example.demo.service.FarmService;
-import com.example.demo.service.SuggestionService;
+import com.example.demo.util.ValidationUtil;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class SuggestionServiceImpl implements SuggestionService {
-    private final FarmService farmService;
-    private final CatalogService catalogService;
-    private final SuggestionRepository suggestionRepository;
+public class CatalogServiceImpl implements CatalogService {
+    private final CropRepository cropRepository;
+    private final FertilizerRepository fertilizerRepository;
 
-    public SuggestionServiceImpl(FarmService farmService, CatalogService catalogService, SuggestionRepository suggestionRepository) {
-        this.farmService = farmService;
-        this.catalogService = catalogService;
-        this.suggestionRepository = suggestionRepository;
+    public CatalogServiceImpl(CropRepository cropRepository, FertilizerRepository fertilizerRepository) {
+        this.cropRepository = cropRepository;
+        this.fertilizerRepository = fertilizerRepository;
     }
 
     @Override
-    public Suggestion generateSuggestion(Long farmId) {
-        Farm farm = farmService.getFarmById(farmId); // Validates farm exists [cite: 264]
-        
-        List<Crop> crops = catalogService.findSuitableCrops(farm.getSoilPH(), farm.getWaterLevel(), farm.getSeason());
-        List<String> cropNames = crops.stream().map(Crop::getName).collect(Collectors.toList());
-        
-        // Convert to comma-separated string [cite: 265]
-        String cropCsv = String.join(",", cropNames);
-
-        List<String> fertNames = catalogService.findFertilizersForCrops(cropNames)
-            .stream().map(f -> f.getName()).collect(Collectors.toList());
-        String fertCsv = String.join(",", fertNames);
-
-        Suggestion suggestion = Suggestion.builder()
-                .farm(farm)
-                .suggestedCrops(cropCsv)
-                .suggestedFertilizers(fertCsv)
-                .build();
-        
-        // Note: @PrePersist in Suggestion entity handles createdAt [cite: 230, 321]
-        return suggestionRepository.save(suggestion);
+    public Crop addCrop(Crop crop) {
+        if (crop.getSuitablePHMin() > crop.getSuitablePHMax()) {
+            throw new BadRequestException("PH min cannot be greater than PH max");
+        }
+        if (!ValidationUtil.validSeason(crop.getSeason())) {
+            throw new BadRequestException("Invalid season");
+        }
+        return cropRepository.save(crop);
     }
 
     @Override
-    public Suggestion getSuggestion(Long id) {
-        return suggestionRepository.findById(id)
-            .orElseThrow(() -> new com.example.demo.exception.ResourceNotFoundException("Suggestion not found"));
+    public Fertilizer addFertilizer(Fertilizer fertilizer) {
+        if (fertilizer.getNpkRatio() == null || !fertilizer.getNpkRatio().matches("\\d+-\\d+-\\d+")) {
+            throw new BadRequestException("Invalid NPK format");
+        }
+        return fertilizerRepository.save(fertilizer);
     }
 
     @Override
-    public List<Suggestion> getSuggestionsByFarm(Long farmId) {
-        return suggestionRepository.findByFarmId(farmId);
+    public List<Crop> findSuitableCrops(Double ph, Double water, String season) {
+        return cropRepository.findSuitableCrops(ph, water, season);
+    }
+
+    @Override
+    public List<Fertilizer> findFertilizersForCrops(List<String> cropNames) {
+        return fertilizerRepository.findAll().stream()
+                .filter(f -> cropNames.stream().anyMatch(name -> f.getRecommendedForCrops().contains(name)))
+                .collect(Collectors.toList());
     }
 }
