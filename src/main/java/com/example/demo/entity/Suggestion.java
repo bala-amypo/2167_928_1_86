@@ -1,11 +1,4 @@
-package com.example.demo.entity;
-
-import lombok.*;
-import javax.persistence.*;
-import java.time.LocalDateTime;
-
 @Entity
-@Table(name = "suggestions")
 @Data
 @Builder
 @NoArgsConstructor
@@ -16,14 +9,13 @@ public class Suggestion {
     private Long id;
     private String suggestedCrops;
     private String suggestedFertilizers;
-    private LocalDateTime createdAt;
+    private java.time.LocalDateTime createdAt;
 
     @ManyToOne
-    @JoinColumn(name = "farm_id")
     private Farm farm;
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = java.time.LocalDateTime.now();
     }
 }
