@@ -7,12 +7,20 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- ✅ SPRING BOOT PARENT (VERY IMPORTANT) -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.5</version>
+        <relativePath/>
+    </parent>
+
     <groupId>com.example</groupId>
     <artifactId>demo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
-
     <name>demo</name>
+    <description>Crop and Fertilizer Suggestion API</description>
+    <packaging>jar</packaging>
 
     <properties>
         <java.version>17</java.version>
@@ -20,17 +28,19 @@
 
     <dependencies>
 
-        <!-- Spring Boot -->
+        <!-- Spring Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!-- Spring Data JPA -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
 
+        <!-- Spring Security -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -55,7 +65,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- DB -->
+        <!-- H2 Database -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -69,7 +79,7 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- TestNG (DO NOT FORCE SUREFIRE) -->
+        <!-- TestNG -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -102,6 +112,7 @@
 
     <build>
         <plugins>
+            <!-- Spring Boot Plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
