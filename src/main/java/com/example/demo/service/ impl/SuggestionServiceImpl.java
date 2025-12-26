@@ -4,7 +4,7 @@ import com.example.demo.entity.*;
 import com.example.demo.repository.SuggestionRepository;
 import com.example.demo.service.*;
 import org.springframework.stereotype.Service;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,11 +24,18 @@ public class SuggestionServiceImpl implements SuggestionService {
         Farm farm = farmService.getFarmById(farmId);
         
         List<Crop> crops = catalogService.findSuitableCrops(farm.getSoilPH(), farm.getWaterLevel(), farm.getSeason());
-        String cropCsv = crops.stream().map(Crop::getName).collect(Collectors.joining(","));
+        
+        String cropCsv = crops.stream()
+                .map(Crop::getName)
+                .collect(Collectors.joining(","));
 
-        List<String> cropNames = crops.stream().map(Crop::getName).collect(Collectors.toList());
+        List<String> cropNames = crops.stream()
+                .map(Crop::getName)
+                .collect(Collectors.toList());
+
         String fertCsv = catalogService.findFertilizersForCrops(cropNames).stream()
-                .map(Fertilizer::getName).collect(Collectors.joining(","));
+                .map(Fertilizer::getName)
+                .collect(Collectors.joining(","));
 
         Suggestion suggestion = Suggestion.builder()
                 .farm(farm)
@@ -41,7 +48,8 @@ public class SuggestionServiceImpl implements SuggestionService {
 
     @Override
     public Suggestion getSuggestion(Long id) {
-        return suggestionRepository.findById(id).orElseThrow(() -> new RuntimeException("Suggestion not found"));
+        return suggestionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Suggestion not found"));
     }
 
     @Override
