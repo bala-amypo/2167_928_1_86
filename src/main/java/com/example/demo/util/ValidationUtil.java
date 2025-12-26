@@ -1,11 +1,9 @@
 package com.example.demo.util;
 
-public class ValidationUtil {
+import java.util.List;
 
-    public static boolean validSeason(String season) {
-        return season != null &&
-                (season.equalsIgnoreCase("Kharif")
-              || season.equalsIgnoreCase("Rabi")
-              || season.equalsIgnoreCase("Summer"));
+public class ValidationUtil {
+    public static boolean validSeason(String s) {
+        return List.of("Kharif","Rabi","Summer").contains(s);
     }
 }

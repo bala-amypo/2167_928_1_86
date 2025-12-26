@@ -1,56 +1,48 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.entity.Suggestion;
-import com.example.demo.service.*;
+import com.example.demo.entity.*;
 import com.example.demo.repository.SuggestionRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import com.example.demo.service.*;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
-@RequiredArgsConstructor
 public class SuggestionServiceImpl implements SuggestionService {
 
     private final FarmService farmService;
     private final CatalogService catalogService;
-    private final SuggestionRepository suggestionRepository;
+    private final SuggestionRepository repo;
 
-    @Override
+    public SuggestionServiceImpl(FarmService f, CatalogService c, SuggestionRepository r) {
+        this.farmService = f;
+        this.catalogService = c;
+        this.repo = r;
+    }
+
     public Suggestion generateSuggestion(Long farmId) {
-        var farm = farmService.getFarmById(farmId);
+        Farm farm = farmService.getFarmById(farmId);
 
         var crops = catalogService.findSuitableCrops(
-                farm.getSoilPH(),
-                farm.getWaterLevel(),
-                farm.getSeason()
-        );
+                farm.getSoilPH(), farm.getWaterLevel(), farm.getSeason());
 
-        var cropNames = crops.stream()
-                .map(c -> c.getName())
-                .collect(Collectors.toList());
+        var cropNames = crops.stream().map(Crop::getName).toList();
 
-        var fertilizers = catalogService.findFertilizersForCrops(cropNames);
+        var ferts = catalogService.findFertilizersForCrops(cropNames);
 
-        Suggestion suggestion = Suggestion.builder()
+        Suggestion s = Suggestion.builder()
                 .farm(farm)
                 .suggestedCrops(String.join(",", cropNames))
                 .suggestedFertilizers(
-                        fertilizers.stream().map(f -> f.getName()).collect(Collectors.joining(",")))
+                        ferts.stream().map(Fertilizer::getName).collect(Collectors.joining(",")))
                 .build();
 
-        return suggestionRepository.save(suggestion);
+        return repo.save(s);
     }
 
-    @Override
-    public Suggestion getSuggestion(Long suggestionId) {
-        return suggestionRepository.findById(suggestionId)
-                .orElseThrow(() -> new RuntimeException("Suggestion not found"));
+    public Suggestion getSuggestion(Long id) {
+        return repo.findById(id).orElse(null);
     }
 
-    @Override
-    public List<Suggestion> getSuggestionsByFarm(Long farmId) {
-        return suggestionRepository.findByFarmId(farmId);
+    public java.util.List<Suggestion> getSuggestionsByFarm(Long farmId) {
+        return repo.findByFarmId(farmId);
     }
 }

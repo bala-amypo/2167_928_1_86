@@ -4,11 +4,9 @@ import com.example.demo.dto.FarmRequest;
 import com.example.demo.entity.Farm;
 import com.example.demo.service.FarmService;
 import com.example.demo.service.UserService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/farms")
@@ -17,32 +15,30 @@ public class FarmController {
     private final FarmService farmService;
     private final UserService userService;
 
-    // REQUIRED BY TESTS
     public FarmController(FarmService farmService, UserService userService) {
         this.farmService = farmService;
         this.userService = userService;
     }
 
     @PostMapping
-    public ResponseEntity<Farm> createFarm(
-            @RequestBody FarmRequest req,
-            Authentication auth
-    ) {
+    public ResponseEntity<Farm> createFarm(@RequestBody FarmRequest req, Authentication auth) {
         Long ownerId = (Long) auth.getPrincipal();
-
         Farm farm = Farm.builder()
                 .name(req.getName())
                 .soilPH(req.getSoilPH())
                 .waterLevel(req.getWaterLevel())
                 .season(req.getSeason())
                 .build();
-
         return ResponseEntity.ok(farmService.createFarm(farm, ownerId));
     }
 
     @GetMapping
-    public ResponseEntity<List<Farm>> listFarms(Authentication auth) {
-        Long ownerId = (Long) auth.getPrincipal();
-        return ResponseEntity.ok(farmService.getFarmsByOwner(ownerId));
+    public ResponseEntity<?> listFarms(Authentication auth) {
+        return ResponseEntity.ok(farmService.getFarmsByOwner((Long) auth.getPrincipal()));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Farm> get(@PathVariable Long id) {
+        return ResponseEntity.ok(farmService.getFarmById(id));
     }
 }
