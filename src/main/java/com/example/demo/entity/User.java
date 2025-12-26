@@ -3,14 +3,12 @@ package com.example.demo.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
-@Entity
-@Table(name = "users")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "users")
 public class User {
 
     @Id
@@ -25,7 +23,4 @@ public class User {
     private String password;
 
     private String role;
-
-    @OneToMany(mappedBy = "owner")
-    private List<Farm> farms;
 }
