@@ -1,21 +1,22 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*; // Change from javax to jakarta
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "crops")
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@Data @Builder @NoArgsConstructor @AllArgsConstructor
 public class Crop {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private Double suitablePHMin;
     private Double suitablePHMax;
     private Double requiredWater;
     private String season;
+
+    // Add manual getters if Lombok is not generating them
+    public String getName() { return name; }
+    public Double getSuitablePHMin() { return suitablePHMin; }
+    public Double getSuitablePHMax() { return suitablePHMax; }
+    public String getSeason() { return season; }
 }

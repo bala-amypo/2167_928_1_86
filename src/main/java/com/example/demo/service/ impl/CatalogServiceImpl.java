@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class CatalogServiceImpl implements CatalogService {
+public class CatalogServiceImpl implements CatalogService { // Must be public
     private final CropRepository cropRepository;
     private final FertilizerRepository fertilizerRepository;
 
@@ -22,8 +22,10 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public Crop addCrop(Crop crop) {
         // Validation for t40
-        if (crop.getSuitablePHMin() > crop.getSuitablePHMax()) {
-            throw new BadRequestException("PH min cannot be greater than PH max");
+        if (crop.getSuitablePHMin() != null && crop.getSuitablePHMax() != null) {
+            if (crop.getSuitablePHMin() > crop.getSuitablePHMax()) {
+                throw new BadRequestException("PH min cannot be greater than PH max");
+            }
         }
         // Validation for t47
         if (!ValidationUtil.validSeason(crop.getSeason())) {
@@ -49,7 +51,8 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public List<Fertilizer> findFertilizersForCrops(List<String> cropNames) {
         return fertilizerRepository.findAll().stream()
-                .filter(f -> cropNames.stream().anyMatch(name -> f.getRecommendedForCrops().contains(name)))
+                .filter(f -> f.getRecommendedForCrops() != null && 
+                        cropNames.stream().anyMatch(name -> f.getRecommendedForCrops().contains(name)))
                 .collect(Collectors.toList());
     }
 }
