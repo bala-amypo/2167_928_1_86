@@ -1,7 +1,7 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -9,16 +9,14 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Farm {
-
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    private User owner;
-
     private String name;
     private Double soilPH;
     private Double waterLevel;
     private String season;
+    
+    @ManyToOne
+    private User owner;
 }
