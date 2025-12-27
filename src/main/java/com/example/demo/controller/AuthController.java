@@ -7,7 +7,8 @@ import com.example.demo.entity.User;
 import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserService;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,27 +16,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
 
-    private UserService userService;
-    private JwtTokenProvider jwtTokenProvider;
-    private PasswordEncoder passwordEncoder;
-
-    // ✅ REQUIRED FOR t01_springContextLoads
-    public AuthController() {
-    }
-
-    // ✅ REQUIRED FOR SPRING DI
-    @Autowired
-    public AuthController(
-            UserService userService,
-            JwtTokenProvider jwtTokenProvider,
-            PasswordEncoder passwordEncoder
-    ) {
-        this.userService = userService;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
     // ================= REGISTER =================
     @PostMapping("/register")
@@ -57,7 +43,7 @@ public class AuthController {
 
         User user = userService.findByEmail(request.getEmail());
 
-        // ✅ REQUIRED FOR t34_authControllerLoginFailWrongPassword
+        // ✅ REQUIRED FOR t34
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
