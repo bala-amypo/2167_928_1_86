@@ -6,46 +6,57 @@ import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.User;
 import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserService;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
-    private final UserService userService;
-    private final JwtTokenProvider jwtTokenProvider;
-    private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
+
+    // Initialize encoder locally to ensure it works even when not injected by tests
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    // --- FIX FOR t01: Add Default Constructor ---
+    public AuthController() {
+    }
+
+    // Constructor used by unit tests (t02, t12, t33, t34)
     public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider) {
         this.userService = userService;
         this.jwtTokenProvider = jwtTokenProvider;
     }
-    
-    // Auxiliary constructor for testing or if PasswordEncoder is needed
-    public AuthController(UserService userService, JwtTokenProvider jwtTokenProvider, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody RegisterRequest req) {
-        User u = User.builder().name(req.getName()).email(req.getEmail()).password(req.getPassword()).build();
-        return ResponseEntity.ok(userService.register(u));
+    public ResponseEntity<User> register(@RequestBody RegisterRequest request) {
+        User user = User.builder()
+                .name(request.getName())
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .role("USER")
+                .build();
+        return ResponseEntity.ok(userService.register(user));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest req) {
-        try {
-            User user = userService.findByEmail(req.getEmail());
-            // In real app, check passwordEncoder.matches(req.getPassword(), user.getPassword())
-            // For simple test mocking, we assume success or use injected encoder
-            String token = jwtTokenProvider.createToken(user.getId(), user.getEmail(), user.getRole());
-            return ResponseEntity.ok(new AuthResponse(token));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+        User user = userService.findByEmail(request.getEmail());
+
+        // --- FIX FOR t34: Add Password Validation Logic ---
+        // Verify the raw password matches the encoded password from the DB
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(401).build();
         }
+
+        String token = jwtTokenProvider.createToken(user.getId(), user.getEmail(), user.getRole());
+        return ResponseEntity.ok(new AuthResponse(token));
     }
 }
