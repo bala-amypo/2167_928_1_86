@@ -8,16 +8,18 @@ import com.example.demo.repository.FarmRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.FarmService;
 import com.example.demo.util.ValidationUtil;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.util.List;
 
+@Service
 public class FarmServiceImpl implements FarmService {
 
     private final FarmRepository farmRepository;
     private final UserRepository userRepository;
 
-    public FarmServiceImpl(FarmRepository farmRepository,
-                           UserRepository userRepository) {
+    @Autowired
+    public FarmServiceImpl(FarmRepository farmRepository, UserRepository userRepository) {
         this.farmRepository = farmRepository;
         this.userRepository = userRepository;
     }
@@ -30,10 +32,8 @@ public class FarmServiceImpl implements FarmService {
         if (!ValidationUtil.validSeason(farm.getSeason())) {
             throw new BadRequestException("Invalid season");
         }
-
         User owner = userRepository.findById(ownerId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
+                .orElseThrow(() -> new RuntimeException("User not found"));
         farm.setOwner(owner);
         return farmRepository.save(farm);
     }

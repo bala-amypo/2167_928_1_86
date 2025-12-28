@@ -7,17 +7,19 @@ import com.example.demo.repository.CropRepository;
 import com.example.demo.repository.FertilizerRepository;
 import com.example.demo.service.CatalogService;
 import com.example.demo.util.ValidationUtil;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class CatalogServiceImpl implements CatalogService {
 
     private final CropRepository cropRepository;
     private final FertilizerRepository fertilizerRepository;
 
-    public CatalogServiceImpl(CropRepository cropRepository,
-                              FertilizerRepository fertilizerRepository) {
+    @Autowired
+    public CatalogServiceImpl(CropRepository cropRepository, FertilizerRepository fertilizerRepository) {
         this.cropRepository = cropRepository;
         this.fertilizerRepository = fertilizerRepository;
     }
@@ -42,9 +44,7 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public List<Crop> findSuitableCrops(Double ph,
-                                        Double waterLevel,
-                                        String season) {
+    public List<Crop> findSuitableCrops(Double ph, Double waterLevel, String season) {
         return cropRepository.findSuitableCrops(ph, waterLevel, season);
     }
 
