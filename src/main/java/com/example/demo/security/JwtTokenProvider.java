@@ -1,25 +1,27 @@
 package com.example.demo.security;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
+import java.security.Key;
+import java.util.Date;
 
 @Component
-public class JwtTokenFilter extends OncePerRequestFilter {
+public class JwtTokenProvider {
 
-    @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
-    ) throws ServletException, IOException {
+    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private final long validity = 3600000; // 1 hour
 
-        // JWT validation logic can be added later
-        filterChain.doFilter(request, response);
+    public String createToken(Long userId, String email, String role) {
+        return Jwts.builder()
+                .claim("id", userId)
+                .claim("email", email)
+                .claim("role", role)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + validity))
+                .signWith(key)
+                .compact();
     }
 }
