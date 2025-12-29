@@ -1,4 +1,3 @@
-cat <<EOF > testng.xml
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
 <suite name="DemoSuite" verbose="1">
     <test name="FunctionalTests">
@@ -7,4 +6,3 @@ cat <<EOF > testng.xml
         </classes>
     </test>
 </suite>
-EOF
